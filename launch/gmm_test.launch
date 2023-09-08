@@ -1,0 +1,45 @@
+<launch>
+    <!-- -loop -->
+    <!-- <node pkg="rosbag" type="play" name="player"  args="-loop  $(find gmm_test)/bag/pointcloud_demo.bag"/> -->
+    <!-- <node pkg="gmm_test" type="gmm_test" name="gmm" output="screen" />-->
+    <!-- <node pkg="rviz" type="rviz" name="rviz" args=" -d $(find gmm_test)/rviz/gmm.rviz" required="true" />-->
+
+
+    <arg name="agent_id"  default="0"/>
+	<arg name="x" default="0"/>
+	<arg name="y" default="5"/>
+	<arg name="z" default="0"/>
+	
+	<arg name="N_filter" default="0"/><!-- 体素最小点个数 -->
+	<arg name="near_distance" default="0"/><!-- 直通滤波最近距离 -->
+	<arg name="far_distance" default="40"/><!-- 直通滤波最远距离 -->
+	<arg name="grid_size" default="0.1"/><!-- 体素滤波精度（大范围调整拟合速度） -->
+	<arg name="Z_boundary" default="50"/><!-- z轴的界限，Z轴观测范围为 (position_Z - Z_boundary ～  position_Z + Z_boundary)-->
+	<arg name="max_number" default="100"/>	
+	<arg name="EM_begin_number" default="150"/>
+
+
+	<node pkg="gmm_test" name="GMM_fitting$(arg agent_id)" type="gmm_test" output="screen">
+        <param name="agent_id" value="$(arg agent_id)" type="int"/>
+	    <param name="x" value="$(arg x)" type="double"/>
+	    <param name="y" value="$(arg y)" type="double"/>
+	  	<param name="z" value="$(arg z)" type="double"/>
+		<param name="N_filter" value="$(arg N_filter)" type="int"/>
+	    <param name="near_distance" value="$(arg near_distance)" type="double"/>
+	    <param name="far_distance" value="$(arg far_distance)" type="double"/>
+	  	<param name="grid_size" value="$(arg grid_size)" type="double"/>
+		<param name="Z_boundary" value="$(arg Z_boundary)" type="double"/>
+		<param name="max_number" value="$(arg max_number)" type="int"/>
+		<param name="EM_begin_number" value="$(arg EM_begin_number)" type="int"/>
+
+		<remap from="/uav0/mavros/local_position/pose" to = "/uav$(arg agent_id)/mavros/local_position/pose"/>
+		<remap from="/iris_0/camera/depth/points" to = "/iris_$(arg agent_id)/camera/depth/points"/>
+		<!--<remap from="/iris_0/camera/depth/points" to = "/iris_$(arg agent_id)/camera/depth/points"/>--> 
+		<!-- <remap from="/uav0/mavros/local_position/pose" to = "/uav$(arg agent_id)/mavros/local_position/pose/>-->
+        <remap from="/iris/gimbal_yaw_angle" to = "/iris_$(arg agent_id)/gimbal_yaw_angle"/>
+
+	</node>
+
+	<!--<node pkg="rviz" type="rviz" name="rviz" args=" -d $(find gmm_test)/rviz/gmm.rviz" required="true" />-->
+
+</launch>
